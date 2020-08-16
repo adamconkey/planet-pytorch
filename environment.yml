@@ -1,12 +1,15 @@
 name: planet
 channels:
+  - conda-forge
   - pytorch
 dependencies:
+  - python=3.7
   - plotly
   - pytorch
   - torchvision
+  - opencv
   - tqdm
+  - gym
   - pip
   - pip:
-    - gym
-    - opencv-python
+    - dm_control
