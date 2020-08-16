@@ -157,10 +157,10 @@ if args.test:
 
 
 # Training (and testing)
-for episode in tqdm(range(metrics['episodes'][-1] + 1, args.episodes + 1), total=args.episodes, initial=metrics['episodes'][-1] + 1):
+for episode in tqdm(range(metrics['episodes'][-1] + 1, args.episodes + 1), total=args.episodes, initial=metrics['episodes'][-1] + 1, desc='Episode'):
   # Model fitting
   losses = []
-  for s in tqdm(range(args.collect_interval)):
+  for s in tqdm(range(args.collect_interval), desc='Fit Model'):
     # Draw sequence chunks {(o_t, a_t, r_t+1, terminal_t+1)} ~ D uniformly at random from the dataset (including terminal flags)
     observations, actions, rewards, nonterminals = D.sample(args.batch_size, args.chunk_size)  # Transitions start at time t = 0
     # Create initial belief and state for time t = 0
@@ -218,7 +218,7 @@ for episode in tqdm(range(metrics['episodes'][-1] + 1, args.episodes + 1), total
   with torch.no_grad():
     observation, total_reward = env.reset(), 0
     belief, posterior_state, action = torch.zeros(1, args.belief_size, device=args.device), torch.zeros(1, args.state_size, device=args.device), torch.zeros(1, env.action_size, device=args.device)
-    pbar = tqdm(range(args.max_episode_length // args.action_repeat))
+    pbar = tqdm(range(args.max_episode_length // args.action_repeat), desc='Collect Data')
     for t in pbar:
       belief, posterior_state, action, next_observation, reward, done = update_belief_and_act(args, env, planner, transition_model, encoder, belief, posterior_state, action, observation.to(device=args.device), env.action_range[0], env.action_range[1], explore=True)
       D.append(observation, action.cpu(), reward, done)
