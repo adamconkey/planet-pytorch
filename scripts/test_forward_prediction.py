@@ -71,6 +71,7 @@ if __name__ == '__main__':
         
         # Setting prior as initial posterior
         prior_state = posterior_state
+        imgs = []
         for i in range(args.n_steps):
             action = actions[i].unsqueeze(dim=0)
             
@@ -92,6 +93,14 @@ if __name__ == '__main__':
             
             img = np.concatenate([actual, decoded], axis=1)
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            cv2.imshow('screen', img)
-            cv2.waitKey(0)
-            
+            imgs.append(img)
+            # cv2.imshow('screen', img)
+            # cv2.waitKey(0)
+
+        imgs = np.stack(imgs, axis=0)
+        _, H, W, _ = imgs.shape
+        writer = cv2.VideoWriter('predictions.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 5., (W, H), True)
+        for img in imgs:
+            writer.write(img)
+        writer.release()
+
